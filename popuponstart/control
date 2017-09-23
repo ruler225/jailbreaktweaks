@@ -1,9 +1,0 @@
-Package: com.youssefm.popuponstart
-Name: PopupOnStart
-Depends: mobilesubstrate
-Version: 0.0.1
-Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
-Maintainer: Youssef Mikhail
-Author: Youssef Mikhail
-Section: Tweaks

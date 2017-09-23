@@ -1,9 +1,0 @@
-Package: com.ruler225.openwithgooglephotos
-Name: Open with Google Photos
-Depends: mobilesubstrate
-Version: 0.0.1
-Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
-Maintainer: Youssef Mikhail
-Author: Youssef Mikhail
-Section: Tweaks
