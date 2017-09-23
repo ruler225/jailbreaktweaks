@@ -1,7 +1,7 @@
 Package: com.ruler225.IamNoGenius
 Name: IamNoGenius
 Depends: mobilesubstrate
-Version: 0.0.1
+Version: 0.0.3
 Architecture: iphoneos-arm
 Description: Disable Genius/Behind the Lyrics in Spotify
 Maintainer: Youssef Mikhail

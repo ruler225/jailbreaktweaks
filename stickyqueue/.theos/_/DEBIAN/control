@@ -1,0 +1,10 @@
+Package: com.ruler225.stickyqueue
+Name: StickyQueue
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Youssef Mikhail
+Author: Youssef Mikhail
+Section: Tweaks
+Version: 0.0.1-25+debug
+Installed-Size: 120
