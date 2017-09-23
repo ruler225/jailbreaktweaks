@@ -15,38 +15,14 @@ NSString *currentAlbum = @"";
 @interface SBNCScreenController
 -(void)_turnOnScreen;
 @end
-/*
-@interface SBLockScreenNotificationListController
--(void)_turnOnScreen;
-@end
-*/
+
 @interface SBUserAgent
 +(id)sharedUserAgent;
 -(void)undimScreen;
 @end
 
 SBNCScreenController *screenref;
-/*
-SBLockScreenNotificationListController *screenref9;
 
-%group iOS9
-
-%hook SBLockScreenNotificationListController
--(void)loadView{
-	screenref9 = self;
-	return %orig;
-}
-
--(void)initWithNibName:(id)arg1 bundle:(id)arg2{
-	screenref9 = self;
-	return %orig;
-}
-
-
-%end
-
-%end
-*/
 %group iOS10
 
 %hook SBNCScreenController
@@ -97,6 +73,8 @@ SBLockScreenNotificationListController *screenref9;
 				newNowPlayingArtist = [[NSString alloc] initWithString:[info objectForKey:(NSString *)kMRMediaRemoteNowPlayingInfoArtist]];
 				else
 				newNowPlayingArtist = @"";
+
+				//These lines can be uncommented for debugging purposes. Use oslog to view output
 /*
 				HBLogDebug(@"Old song: %@ | New song: %@", currentTitle, newNowPlayingTitle);
 				HBLogDebug(@"Old album: %@ | New album: %@", currentAlbum, newNowPlayingAlbum);
