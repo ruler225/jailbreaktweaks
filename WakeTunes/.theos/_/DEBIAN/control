@@ -6,5 +6,5 @@ Description: Turns on the screen when the currently playing song changes.
 Maintainer: Youssef Mikhail
 Author: Youssef Mikhail
 Section: Tweaks
-Version: 1.1-1
-Installed-Size: 260
+Version: 1.1-5+debug
+Installed-Size: 268

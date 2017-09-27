@@ -3,6 +3,7 @@
 
 bool lowPowerEnabled;
 bool enabledInLPM;
+bool enabledOnBattery;
 bool trackChanged;
 bool deviceLocked;
 bool iOS10;
@@ -21,8 +22,66 @@ NSString *currentAlbum = @"";
 -(void)undimScreen;
 @end
 
+@interface SBUIController
+-(bool)isBatteryCharging;
++(id)sharedInstanceIfExists;
+@end
+
+@interface SpringBoard
+//-(void)_proximityChanged:(id)arg1;
+-(void)setProximityEventsEnabled:(bool)arg1;
+@end
+
+@interface SBProximitySensorManager
+-(void)_enableProx;
+-(bool)objectWithinProximity;
++(id)sharedInstance;
+@end
+
+SBProximitySensorManager *proxref;
+
+//SpringBoard *sbref;
+
 SBNCScreenController *screenref;
 
+%hook SBProximitySensorManager
+
+-(void)_proximityChanged:(id)arg1{
+	%orig;
+	HBLogDebug(@"Object within proximity: %@", ([self objectWithinProximity] ? @"YES" : @"NO"));
+}
+
+-(void)_enableProx{
+	%orig;
+	HBLogDebug(@"Prox enabled successfully");
+}
+
+-(id)init{
+	proxref = self;
+	HBLogDebug(@"Got instance of SBProximitySensorManager");
+	return %orig;
+}
+
+%new
+-(bool)objectWithinProximity{
+	return MSHookIvar<bool>(self, "_objectWithinProximity");
+}
+
+%end
+
+/*
+%hook SpringBoard
+-(id)init{
+	sbref = self;
+	return %orig;
+}
+
+-(void)_proximityChanged:(id)arg1{
+	%orig;
+	HBLogDebug(@"Proximity changed");
+}
+%end
+*/
 %group iOS10
 
 %hook SBNCScreenController
@@ -95,8 +154,10 @@ SBNCScreenController *screenref;
 
 			}
 
+			[proxref _enableProx];
 			//HBLogDebug(@"Screen should turn on now: %@", (trackChanged ? @"Yes" : @"no"));
-			if (trackChanged && deviceLocked) {
+			HBLogDebug(@"Object within proximity: %@", ([proxref objectWithinProximity] ? @"YES" : @"NO"));
+			if (trackChanged && deviceLocked && (enabledOnBattery || [((SBUIController *)[%c(SBUIController) sharedInstanceIfExists]) isBatteryCharging])) {
 				if(iOS10)
 					[screenref _turnOnScreen];
 				else
@@ -119,6 +180,7 @@ SBNCScreenController *screenref;
 	CFPreferencesAppSynchronize(CFSTR(BUNDLEID));
 	CFPropertyListRef enabled = CFPreferencesCopyAppValue(CFSTR("Enabled"), CFSTR(BUNDLEID));
 	CFPropertyListRef LPMEnabled= CFPreferencesCopyAppValue(CFSTR("EnabledLPM"), CFSTR(BUNDLEID));
+	CFPropertyListRef BatteryEnabled = CFPreferencesCopyAppValue(CFSTR("EnabledBattery"), CFSTR(BUNDLEID));
 
 	if(enabled == nil)
 	tweakEnabled = true;
@@ -130,8 +192,12 @@ SBNCScreenController *screenref;
 	else
 	enabledInLPM = [CFBridgingRelease(LPMEnabled) boolValue];
 
+	if(BatteryEnabled == nil)
+	enabledOnBattery = true;
+	else
+	enabledOnBattery = [CFBridgingRelease(BatteryEnabled) boolValue];
 
-	if(tweakEnabled)
+	if(tweakEnabled) {
 		%init(_ungrouped);
 		if(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_3){
 			iOS10 = true;
@@ -139,4 +205,7 @@ SBNCScreenController *screenref;
 		}
 		else
 			iOS10 = false;
+
+			//[sbref setProximityEventsEnabled:true];
+}
 }

@@ -29,6 +29,18 @@
 			<string>Enable during Low Power Mode</string>
 		</dict>
 		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.ruler225.waketunes</string>
+			<key>key</key>
+			<string>EnabledBattery</string>
+			<key>label</key>
+			<string>Enable when not charging</string>
+		</dict>
+		<dict>
 			<key>action</key>
 			<string>respring</string>
 			<key>cell</key>
