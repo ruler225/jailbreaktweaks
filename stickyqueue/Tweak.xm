@@ -1,8 +1,8 @@
 %hook SPTPlayerTrack
 -(NSDictionary *)metadata{
-  NSMutableDictionary *newMetadata = [[NSMutableDictionary alloc] init];
-  [newMetadata addEntriesFromDictionary: %orig];
-  [newMetadata setObject:[NSNumber numberWithBool:FALSE] forKey:@"is_queued"];
-  return [NSDictionary dictionaryWithDictionary:newMetadata];
+    NSMutableDictionary *newMetadata = NSMutableDictionary.new;
+    [newMetadata addEntriesFromDictionary:%orig];
+    [newMetadata setObject:@0 forKey:@"is_queued"];
+    return newMetadata;
 }
 %end
