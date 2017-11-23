@@ -1,24 +1,10 @@
-bool deviceLocked;
-
-%hook SBNCNotificationDispatcher
--(bool)_isDeviceLocked{
-	deviceLocked = %orig;
-	return deviceLocked;
-}
-%end
-
-
 %hook SBHomeHardwareButton
 
--(bool)_acceleratedSinglePressRecognizerShouldBegin{
-	if(deviceLocked){
-	return TRUE;
-}else{
-	return %orig;
+- (bool)_acceleratedSinglePressRecognizerShouldBegin{
+    if (UIApplication.sharedApplication.isLocked) {
+        return TRUE;
+    }
+    return %orig;
 }
-return %orig;	
-}
-
 
 %end
-
