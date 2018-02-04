@@ -5,11 +5,11 @@ bool lowPowerEnabled;
 bool enabledInLPM;
 bool enabledOnBattery;
 bool trackChanged;
-bool deviceLocked;
 bool iOS10;
 NSString *currentTitle = @"";
 NSString *currentArtist = @"";
 NSString *currentAlbum = @"";
+
 
 
 //Create interfaces for the classes with the methods we need
@@ -26,12 +26,13 @@ NSString *currentAlbum = @"";
 -(bool)isBatteryCharging;
 +(id)sharedInstanceIfExists;
 @end
-
+/*
 @interface SpringBoard
 //-(void)_proximityChanged:(id)arg1;
 -(void)setProximityEventsEnabled:(bool)arg1;
 @end
-
+*/
+/*
 @interface SBProximitySensorManager
 -(void)_enableProx;
 -(bool)objectWithinProximity;
@@ -39,11 +40,11 @@ NSString *currentAlbum = @"";
 @end
 
 SBProximitySensorManager *proxref;
-
+*/
 //SpringBoard *sbref;
 
 SBNCScreenController *screenref;
-
+/*
 %hook SBProximitySensorManager
 
 -(void)_proximityChanged:(id)arg1{
@@ -68,7 +69,7 @@ SBNCScreenController *screenref;
 }
 
 %end
-
+*/
 /*
 %hook SpringBoard
 -(id)init{
@@ -82,40 +83,12 @@ SBNCScreenController *screenref;
 }
 %end
 */
-%group iOS10
-
-%hook SBNCScreenController
-- (id)initWithBackLightController:(id)arg1 lockScreenManager:(id)arg2 lockStateAggregator:(id)arg3 quietModeStateAggregator:(id)arg4{
-	screenref = self;
-	return %orig;
-}
-
-%end
-
-%end
-
-%hook SpringBoard
-//Save low power mode’s state in a boolean
--(bool)isBatterySaverModeActive{
-	lowPowerEnabled = %orig;
-	return lowPowerEnabled;
-}
-
--(bool)isLocked{
-	deviceLocked = %orig;
-	return deviceLocked;
-}
-
-%end
-
-%hook SBMediaController
-
--(void)_nowPlayingInfoChanged{
-	%orig;
+void nowPlayingCheck(){
 	//make sure low power mode is off before checking the rest. Because that’s the kind of smart programmer I am :P
 	if(!lowPowerEnabled || enabledInLPM){
 		MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef nowPlayingInfo) {
 			if(nowPlayingInfo != nil) {
+				//[screenref _turnOnScreen];
 				NSDictionary *info = (NSDictionary *)(nowPlayingInfo);
 				NSString *newNowPlayingTitle;
 				NSString *newNowPlayingAlbum;
@@ -154,10 +127,10 @@ SBNCScreenController *screenref;
 
 			}
 
-			[proxref _enableProx];
+			//[proxref _enableProx];
 			//HBLogDebug(@"Screen should turn on now: %@", (trackChanged ? @"Yes" : @"no"));
-			HBLogDebug(@"Object within proximity: %@", ([proxref objectWithinProximity] ? @"YES" : @"NO"));
-			if (trackChanged && deviceLocked && (enabledOnBattery || [((SBUIController *)[%c(SBUIController) sharedInstanceIfExists]) isBatteryCharging])) {
+			//HBLogDebug(@"Object within proximity: %@", ([proxref objectWithinProximity] ? @"YES" : @"NO"));
+			if (trackChanged && (enabledOnBattery || [((SBUIController *)[%c(SBUIController) sharedInstanceIfExists]) isBatteryCharging])) {
 				if(iOS10)
 					[screenref _turnOnScreen];
 				else
@@ -170,6 +143,37 @@ SBNCScreenController *screenref;
 	}
 }
 
+
+%hook SBNCScreenController
+- (id)initWithBackLightController:(id)arg1 lockScreenManager:(id)arg2 lockStateAggregator:(id)arg3 quietModeStateAggregator:(id)arg4{
+	screenref = self;
+	return %orig;
+}
+
+%end
+
+
+%hook SpringBoard
+//Save low power mode’s state in a boolean
+-(bool)isBatterySaverModeActive{
+	lowPowerEnabled = %orig;
+	return lowPowerEnabled;
+}
+
+%end
+
+%hook SBMediaController
+
+-(void)_nowPlayingInfoChanged{
+	%orig;
+	nowPlayingCheck();
+}
+
+//iOS 11 Support (will clean up code later)
+-(void)_mediaRemoteNowPlayingInfoDidChange:(id)arg1{
+	%orig;
+	nowPlayingCheck();
+}
 
 
 %end
@@ -201,7 +205,6 @@ SBNCScreenController *screenref;
 		%init(_ungrouped);
 		if(NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_9_3){
 			iOS10 = true;
-			%init(iOS10);
 		}
 		else
 			iOS10 = false;

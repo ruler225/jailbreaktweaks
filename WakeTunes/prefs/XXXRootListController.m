@@ -10,7 +10,7 @@
 	return _specifiers;
 }
 -(void)respring{
-    system("killall SpringBoard");
+//    system("killall SpringBoard");
 }
 
 @end
