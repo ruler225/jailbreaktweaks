@@ -1,4 +1,4 @@
 */packages/
 .DS_Store
 */.theos/
-/WakeTunes/deb_to_electra.sh
+deb_to_electra.sh
