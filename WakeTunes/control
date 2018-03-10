@@ -1,7 +1,7 @@
 Package: com.ruler225.waketunes
 Name: WakeTunes
 Depends: mobilesubstrate, preferenceloader, firmware (>=9.0)
-Version: 1.1
+Version: 1.2
 Architecture: iphoneos-arm
 Description: Turns on the screen when the currently playing song changes.
 Maintainer: Youssef Mikhail

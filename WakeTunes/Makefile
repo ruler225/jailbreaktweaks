@@ -6,7 +6,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = WakeTunes
 WakeTunes_FILES = Tweak.xm
 WakeTunes_PRIVATE_FRAMEWORKS = MediaRemote
-PACKAGE_VERSION = $(THEOS_PACKAGE_BASE_VERSION)
+PACKAGE_VERSION = 1.2
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 SUBPROJECTS += prefs
