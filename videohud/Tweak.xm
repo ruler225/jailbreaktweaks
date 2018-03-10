@@ -60,14 +60,6 @@ SpringBoard *SBRef = nil;
   HUDWindow = %orig;
   return HUDWindow;
 }
-
--(bool)_shouldAutorotateToInterfaceOrientation:(NSInteger)arg1{
-  return true;
-}
-
--(bool)autorotates{
-  return true;
-}
 %end
 
 %hook SBHUDController
@@ -106,9 +98,7 @@ SpringBoard *SBRef = nil;
     backdrop.alpha = 0;
 
   }
-  if(backdrop.alpha != 0)
-  [HUDWindow _rotateWindowToOrientation:[SBRef activeInterfaceOrientation] updateStatusBar:false duration:0.5 skipCallbacks:true];
-  else
+  //Rotate SBHUDWindow to the appropriate orientation
   [HUDWindow _rotateWindowToOrientation:[SBRef activeInterfaceOrientation] updateStatusBar:false duration:0.5 skipCallbacks:true];
 
   [backdrop setFrame:hudFrame];
