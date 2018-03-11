@@ -18,7 +18,6 @@
 
 @end
 
-
 AVVolumeSlider *newHUD = nil;
 AVBackdropView *backdrop = nil;
 UIView *placeholder = nil;
@@ -89,8 +88,9 @@ SpringBoard *SBRef = nil;
 
   if(newHUD == nil) {
     newHUD = [[AVVolumeSlider alloc] initWithFrame:hudFrame];
+    newHUD.tintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
     backdrop = [[AVBackdropView alloc] initWithFrame:hudFrame];
-    backdrop.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5];
+  //  backdrop.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5];
     placeholder = [[UIView alloc] initWithFrame:bounds];
     placeholder2 = [[UIView alloc] initWithFrame:bounds];
     [placeholder.widthAnchor constraintEqualToConstant:42].active = true;
@@ -148,6 +148,9 @@ otherButtonTitles:nil];
 %hook AVVolumeSlider
 -(CGRect)maximumValueImageRectForBounds:(CGRect)bounds{
   CGRect newbounds = %orig;
+  if([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft)
+  newbounds.origin.x -= 30;  //Accomodate right to left languages, such as Arabic
+  else
   newbounds.origin.x += newbounds.size.width + 10;  //Set location of the image to the right of the slider based on the width + 10 pixels
   return newbounds;
 }
