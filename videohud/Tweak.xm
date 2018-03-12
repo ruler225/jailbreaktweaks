@@ -15,7 +15,10 @@
 
 @interface SpringBoard
 -(NSInteger)activeInterfaceOrientation;
+@end
 
+@interface SBVolumeHUDView
+@property (nonatomic) NSString* title;
 @end
 
 AVVolumeSlider *newHUD = nil;
@@ -29,6 +32,7 @@ SpringBoard *SBRef = nil;
 %hook SBRingerHUDView
 -(void)setProgress:(float)ringerVolume{
   [newHUD setValue:ringerVolume animated:true];
+  [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer"].CGImage scale:10 orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
   %orig;
 }
 %end
@@ -38,11 +42,9 @@ SpringBoard *SBRef = nil;
 -(void)_updateRingerState:(int)silentstate withVisuals:(bool)displayVisuals updatePreferenceRegister:(bool)arg3{
   if(displayVisuals){
     if (silentstate == 0){
-      [newHUD setMaximumValueImage:[UIImage imageNamed:@"VolumeMuted" inBundle:[NSBundle bundleWithPath:@"/System/Library/Frameworks/AVKit.framework"] compatibleWithTraitCollection:NULL]];
+      [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer-silence"].CGImage scale:10 orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
       [newHUD setValue:0 animated:true];
     }
-    else
-    [newHUD setMaximumValueImage:[UIImage imageNamed:@"VolumeHigh" inBundle:[NSBundle bundleWithPath:@"/System/Library/Frameworks/AVKit.framework"] compatibleWithTraitCollection:NULL]];
   }
   %orig;
 }
@@ -81,7 +83,10 @@ SpringBoard *SBRef = nil;
 
   hudFrame.size.width = 162;
   hudFrame.size.height = 47;
-  hudFrame.origin.x = ([[UIScreen mainScreen] bounds].size.width - hudFrame.size.width) - 10;
+  if([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft)
+    hudFrame.origin.x = 10;
+  else
+    hudFrame.origin.x = ([[UIScreen mainScreen] bounds].size.width - hudFrame.size.width) - 10;
   // Put the hudFrame under the status bar, taking in count that not
   // all iPhones have the same status bar height (ie.: iPhone X) (thanks /u/AkdM_!)
   hudFrame.origin.y = statusBarFrame.size.height + 5;
@@ -90,7 +95,6 @@ SpringBoard *SBRef = nil;
     newHUD = [[AVVolumeSlider alloc] initWithFrame:hudFrame];
     newHUD.tintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
     backdrop = [[AVBackdropView alloc] initWithFrame:hudFrame];
-  //  backdrop.backgroundColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5];
     placeholder = [[UIView alloc] initWithFrame:bounds];
     placeholder2 = [[UIView alloc] initWithFrame:bounds];
     [placeholder.widthAnchor constraintEqualToConstant:42].active = true;
@@ -132,7 +136,9 @@ otherButtonTitles:nil];
 -(void)setProgress:(float)volume{
   [newHUD setValue:volume animated:true]; //Adjust the length of the slider based on the current volume
   //Change the image in the HUD depending on how high the volume is
-  if (volume == 0)
+  if([self.title isEqual:@"Ringer"])  //Use ringer icno if the ringer volume is currently being changed
+  [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer"].CGImage scale:10 orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+  else if (volume == 0)
   [newHUD setMaximumValueImage:[UIImage imageNamed:@"VolumeZero" inBundle:[NSBundle bundleWithPath:@"/System/Library/Frameworks/AVKit.framework"] compatibleWithTraitCollection:NULL]];
   else if(volume <=0.32)
   [newHUD setMaximumValueImage:[UIImage imageNamed:@"VolumeLow" inBundle:[NSBundle bundleWithPath:@"/System/Library/Frameworks/AVKit.framework"] compatibleWithTraitCollection:NULL]];
