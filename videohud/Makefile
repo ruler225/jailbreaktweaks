@@ -1,6 +1,5 @@
-
-#TARGET = simulator:clang::5.0
-#ARCHS = x86_64 i386
+#TARGET = simulator:clang::11.0
+#ARCHS = x86_64
 #DEBUG = 0
 
 include $(THEOS)/makefiles/common.mk

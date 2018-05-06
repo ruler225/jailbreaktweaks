@@ -19,6 +19,16 @@
 
 @interface SBVolumeHUDView
 @property (nonatomic) NSString* title;
+@property (nonatomic) UIImage *image;
+@end
+
+@interface VolumeControl
++(id)sharedVolumeControl;
+-(void)_presentVolumeHUDWithMode:(int)arg1 volume:(float)arg2;
+@end
+
+@interface UIImageAsset ()
+@property (nonatomic) NSString *assetName;
 @end
 
 AVVolumeSlider *newHUD = nil;
@@ -32,7 +42,7 @@ SpringBoard *SBRef = nil;
 %hook SBRingerHUDView
 -(void)setProgress:(float)ringerVolume{
   [newHUD setValue:ringerVolume animated:true];
-  [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer"].CGImage scale:10 orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+  [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer"].CGImage scale:([[UIScreen mainScreen] scale]*3.3) orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
   %orig;
 }
 %end
@@ -42,7 +52,7 @@ SpringBoard *SBRef = nil;
 -(void)_updateRingerState:(int)silentstate withVisuals:(bool)displayVisuals updatePreferenceRegister:(bool)arg3{
   if(displayVisuals){
     if (silentstate == 0){
-      [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer-silence"].CGImage scale:10 orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+      [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer-silence"].CGImage scale:([[UIScreen mainScreen] scale]*3.3) orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
       [newHUD setValue:0 animated:true];
     }
   }
@@ -53,6 +63,12 @@ SpringBoard *SBRef = nil;
   SBRef = %orig;
   return SBRef;
 }
+
+-(void)applicationDidFinishLaunching:(id)application{
+  %orig;
+  [[%c(VolumeControl) sharedVolumeControl] _presentVolumeHUDWithMode:1 volume:0];
+}
+
 %end
 
 //Get the current instance of SBHUDWindow
@@ -136,8 +152,8 @@ otherButtonTitles:nil];
 -(void)setProgress:(float)volume{
   [newHUD setValue:volume animated:true]; //Adjust the length of the slider based on the current volume
   //Change the image in the HUD depending on how high the volume is
-  if([self.title isEqual:@"Ringer"])  //Use ringer icno if the ringer volume is currently being changed
-  [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer"].CGImage scale:10 orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+  if([self.image.imageAsset.assetName isEqual:@"ringer"])  //Use ringer icno if the ringer volume is currently being changed
+  [newHUD setMaximumValueImage:[[UIImage imageWithCGImage:[UIImage imageNamed:@"ringer"].CGImage scale:([[UIScreen mainScreen] scale]*3.3) orientation:UIImageOrientationUp] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
   else if (volume == 0)
   [newHUD setMaximumValueImage:[UIImage imageNamed:@"VolumeZero" inBundle:[NSBundle bundleWithPath:@"/System/Library/Frameworks/AVKit.framework"] compatibleWithTraitCollection:NULL]];
   else if(volume <=0.32)

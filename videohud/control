@@ -1,9 +1,9 @@
 Package: com.ruler225.videohud
 Name: VideoHUD
 Depends: mobilesubstrate, firmware (>=11.0)
-Version: 1.4
+Version: 2.2
 Architecture: iphoneos-arm
 Description: Implement the volume HUD from the iOS 11 video player systemwide!
-Maintainer: Youssef Mikhail
-Author: Youssef Mikhail
+Maintainer: Youssef Mikhail <ymiscool@hotmail.com>
+Author: Youssef Mikhail <ymiscool@hotmail.com>
 Section: Tweaks
