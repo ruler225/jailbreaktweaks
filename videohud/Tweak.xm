@@ -1,11 +1,17 @@
+#define iOS11_3_orHigher ([[[UIDevice currentDevice] systemVersion] floatValue] >= 11.3)
+
 //Create interfaces for the stuff we need
 @interface AVVolumeSlider : UISlider
 @end
 
-@interface AVStackView : UIStackView
+ @interface AVStackView : UIStackView
+ @end
+
+@interface AVView : UIView
 @end
 
-@interface AVBackdropView : AVStackView
+@interface AVBackdropView : AVView
+@property (nonatomic, assign) UIStackView *stackView;
 @property (nonatomic, assign) AVStackView *contentView;
 @end
 
@@ -116,15 +122,24 @@ SpringBoard *SBRef = nil;
     [placeholder.widthAnchor constraintEqualToConstant:42].active = true;
     [placeholder2.widthAnchor constraintEqualToConstant:20].active = true;
     backdrop.alpha = 0;
+    backdrop.layer.cornerRadius = 16;
 
   }
   //Rotate SBHUDWindow to the appropriate orientation
   [HUDWindow _rotateWindowToOrientation:[SBRef activeInterfaceOrientation] updateStatusBar:false duration:0.5 skipCallbacks:true];
 
   [backdrop setFrame:hudFrame];
+  if(iOS11_3_orHigher){
+  [backdrop.stackView addArrangedSubview:placeholder2];
+  [backdrop.stackView addArrangedSubview:newHUD];
+  [backdrop.stackView addArrangedSubview:placeholder];
+}else{
   [backdrop.contentView addArrangedSubview:placeholder2];
   [backdrop.contentView addArrangedSubview:newHUD];
   [backdrop.contentView addArrangedSubview:placeholder];
+  //NSLog(@"VideoHUD corner radius: %f", backdrop.layer.cornerRadius);
+}
+       //[backdrop.contentView addSubview:placeholder];
   [HUDWindow addSubview:backdrop];
   [newHUD.widthAnchor constraintEqualToConstant:100].active = true;
 
