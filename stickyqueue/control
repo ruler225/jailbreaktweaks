@@ -3,7 +3,7 @@ Name: StickyQueue
 Depends: mobilesubstrate
 Version: 0.0.1
 Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
-Maintainer: Youssef Mikhail
-Author: Youssef Mikhail
+Description: Adds queued songs in Spotify to Up Next instead of the queue.
+Maintainer: Youssef Mikhail <ymiscool@hotmail.com>
+Author: Youssef Mikhail <ymiscool@hotmail.com>
 Section: Tweaks
