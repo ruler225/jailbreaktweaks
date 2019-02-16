@@ -1,0 +1,9 @@
+Package: com.ruler225.terriblehud
+Name: TerribleHUD
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: I have it on good authority that this is Apple's next planned HUD Design. This tweak is your exclusive preview to Apple's design plans in iOS 13!
+Maintainer: Youssef Mikhail <ymiscool@hotmail.com>
+Author: Youssef Mikhail <ymiscool@hotmail.com>
+Section: Tweaks
