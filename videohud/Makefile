@@ -2,6 +2,8 @@
 #ARCHS = x86_64
 #DEBUG = 0
 
+ARCHS = arm64 arm64e
+
 include $(THEOS)/makefiles/common.mk
 
 
